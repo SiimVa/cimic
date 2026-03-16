@@ -9,15 +9,15 @@ from urllib.parse import urlencode
 from pyproj import Transformer
 import mgrs
 
-st.title("Analüüsiala Katastrid + Interaktiivne OSM Kaart")
+st.title("Analüüsiala katastrid ja kaart")
 
 st.markdown("""
 Sisend: 4 MGRS koordinaati  
-Väljund: CSV tabel, kokkuvõtted ja interaktiivne kaart.
+Väljund: koond tabel, kokkuvõtted ja kaart.
 """)
 
 # Input for MGRS points
-st.header("1. Sisend: 4 MGRS nurkapunkti")
+st.header("1. Sisend: 4 MGRS nurgapunkti")
 pts_mgrs = []
 for i in range(4):
     pt = st.text_input(f"MGRS punkt {i+1}", key=f"pt{i}")
@@ -218,6 +218,10 @@ def run_analysis(pts_mgrs):
         .sort_values(by=["katastriuksuste_arv", "omvorm_std"], ascending=[False, True])
         .reset_index(drop=True)
     )
+    summary_display_df = summary_df.rename(columns={
+        "omvorm_std": "Omandivorm",
+        "katastriuksuste_arv": "Katastriüksuste arv",
+    })
 
     # ============================================================
     # 12A. OMANDIVORMIDE KOKKUVÕTE PINDAALA JÄRGI
@@ -246,6 +250,11 @@ def run_analysis(pts_mgrs):
         by=["pindala_km2", "omvorm_std"],
         ascending=[False, True]
     ).reset_index(drop=True)
+    area_summary_display_df = area_summary_df.rename(columns={
+        "omvorm_std": "Omandivorm",
+        "pindala_km2": "Pindala (km2)",
+        "osakaal_analyysialast_%": "Osakaal",
+    })
 
     # ============================================================
     # 13. FOLIUMI JAOKS TURVALINE GEODATAFRAME
@@ -391,8 +400,8 @@ def run_analysis(pts_mgrs):
         "present_omandivormid": present_omandivormid,
         "has_maaramaata": "Määramata" in ky_clip["omvorm_std"].unique(),
         "result_df": result_df,
-        "summary_df": summary_df,
-        "area_summary_df": area_summary_df,
+        "summary_df": summary_display_df,
+        "area_summary_df": area_summary_display_df,
         "analysis_area_km2": analysis_area_km2,
         "csv_data": csv_data,
         "map_html": map_html,
