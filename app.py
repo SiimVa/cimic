@@ -386,8 +386,6 @@ def run_analysis(pts_mgrs):
     map_html = mymap.get_root().render()
 
     return {
-        "pts_xy": pts_xy,
-        "bbox": (minx, miny, maxx, maxy),
         "ky_count": len(ky),
         "ky_clip_count": len(ky_clip),
         "present_omandivormid": present_omandivormid,
@@ -413,13 +411,6 @@ if st.button("Käivita analüüs"):
 result = st.session_state.analysis_result
 
 if result is not None:
-    st.write("MGRS punktid L-EST97 kujul:")
-    for p_mgrs, (x, y) in zip(pts_mgrs, result["pts_xy"]):
-        st.write(f"{p_mgrs} -> X={x:.3f}, Y={y:.3f}")
-
-    st.write("Analüüsiala bounds (WFS päringu bbox):")
-    st.write(result["bbox"])
-
     st.write(f"BBox-alusel loetud katastriüksusi: {result['ky_count']}")
     st.write(f"Täpse analüüsialaga lõigatud katastriüksusi: {result['ky_clip_count']}")
 
